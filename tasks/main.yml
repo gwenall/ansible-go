@@ -5,24 +5,33 @@
     dest: /usr/local/src/{{ go_tarball }}
     checksum: "{{ go_tarball_checksum }}"
 
+# - name: Extract the current Go version (if any)
+#   command: tar xzf /usr/local/src/{{ go_tarball }} --directory  /usr/local/
+
 - name: Register the current Go version (if any)
   command: /usr/local/go/bin/go version
   ignore_errors: yes
   register: go_version
   changed_when: false
 
+- name: Check that the somefile.conf exists
+  stat:
+    path: /usr/local/go
+  register: stat_result
+
 - name: Remove old installation of Go
   file:
     path: /usr/local/go
     state: absent
-  when: go_version|failed or go_version.stdout != go_version_target
+  when: stat_result.stat.exists
+  # when: go_version|failed or go_version.stdout != go_version_target
 
 - name: Extract the Go tarball if Go is not yet installed or not the desired version
   unarchive:
     src: /usr/local/src/{{ go_tarball }}
     dest: /usr/local
     copy: no
-  when: go_version|failed or go_version.stdout != go_version_target
+  # when: go_version|failed or go_version.stdout != go_version_target
 
 - name: Add the Go bin directory to the PATH environment variable for all users
   copy:
