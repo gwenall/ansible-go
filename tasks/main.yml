@@ -1,9 +1,17 @@
 ---
-- name: Download the Go tarball
-  get_url:
-    url: "{{ go_download_location }}"
+# - name: Download the Go tarball
+#   get_url:
+#     url: "{{ go_download_location }}"
+#     dest: /tmp/{{ go_tarball }}
+#     checksum: "{{ go_tarball_checksum }}"
+
+  # shell: curl -o /usr/local/src/{{ go_tarball }} "{{ go_download_location }}" && sha2sum /usr/local/src/{{ go_tarball }} |grep -q 
+
+- name: targetserver
+  copy:
+    src: /tmp/go-linux-arm64.tar.gz
     dest: /usr/local/src/{{ go_tarball }}
-    checksum: "{{ go_tarball_checksum }}"
+
 
 # - name: Extract the current Go version (if any)
 #   command: tar xzf /usr/local/src/{{ go_tarball }} --directory  /usr/local/
